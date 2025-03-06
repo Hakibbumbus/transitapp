@@ -3,96 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <title>Transit Management System</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app">
+  <div class="container">
     <header>
       <h1>Transit Management System</h1>
-      <nav>
-        <div id="loginStatus">
-          <button id="loginBtn">Login</button>
-          <button id="registerBtn">Register</button>
-        </div>
-      </nav>
+      <div class="connection-status" id="connection-status">Connecting...</div>
     </header>
     
-    <main>
-      <section id="loginSection" class="hidden">
-        <h2>Login</h2>
-        <form id="loginForm">
+    <div class="main-content">
+      <aside class="sidebar">
+        <h2>Add New Vehicle</h2>
+        <form id="add-vehicle-form">
           <div class="form-group">
-            <label for="loginEmail">Email</label>
-            <input type="email" id="loginEmail" required>
+            <label for="vehicleId">Vehicle ID</label>
+            <input type="text" id="vehicleId" required>
           </div>
           <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" required>
+            <label for="type">Type</label>
+            <select id="type" required>
+              <option value="bus">Bus</option>
+              <option value="van">Van</option>
+              <option value="specialized">Specialized</option>
+            </select>
           </div>
-          <button type="submit">Login</button>
+          <div class="form-group">
+            <label for="capacity">Capacity</label>
+            <input type="number" id="capacity" min="1" required>
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" required>
+              <option value="active">Active</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="out-of-service">Out of Service</option>
+            </select>
+          </div>
+          <button type="submit" class="btn">Add Vehicle</button>
         </form>
-      </section>
+      </aside>
       
-      <section id="registerSection" class="hidden">
-        <h2>Register</h2>
-        <form id="registerForm">
-          <div class="form-group">
-            <label for="registerName">Name</label>
-            <input type="text" id="registerName" required>
+      <main>
+        <div class="map-container">
+          <h2>Vehicle Map</h2>
+          <div id="map">
+            <!-- Map will be rendered here -->
+            <div class="map-placeholder">
+              <p>Map Visualization Area</p>
+              <p class="small">Vehicle positions are simulated in this demo</p>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="registerEmail">Email</label>
-            <input type="email" id="registerEmail" required>
+        </div>
+        
+        <div class="vehicle-list-container">
+          <h2>Vehicle List</h2>
+          <div class="vehicle-list" id="vehicle-list">
+            <!-- Vehicles will be populated here -->
+            <div class="loading">Loading vehicles...</div>
           </div>
-          <div class="form-group">
-            <label for="registerPassword">Password</label>
-            <input type="password" id="registerPassword" required>
-          </div>
-          <button type="submit">Register</button>
-        </form>
-      </section>
-      
-      <section id="bookingSection" class="hidden">
-        <h2>Book a Trip</h2>
-        <form id="bookingForm">
-          <div class="form-group">
-            <label for="pickupAddress">Pickup Address</label>
-            <input type="text" id="pickupAddress" required>
-          </div>
-          <div class="form-group">
-            <label for="dropoffAddress">Dropoff Address</label>
-            <input type="text" id="dropoffAddress" required>
-          </div>
-          <div class="form-group">
-            <label for="requestedTime">Requested Time</label>
-            <input type="datetime-local" id="requestedTime" required>
-          </div>
-          <div class="form-group">
-            <label for="passengerCount">Number of Passengers</label>
-            <input type="number" id="passengerCount" min="1" value="1" required>
-          </div>
-          <div class="form-group">
-            <label for="specialRequirements">Special Requirements</label>
-            <textarea id="specialRequirements" rows="3"></textarea>
-          </div>
-          <button type="submit">Book Trip</button>
-        </form>
-      </section>
-      
-      <section id="myBookingsSection" class="hidden">
-        <h2>My Bookings</h2>
-        <div id="bookingsList"></div>
-      </section>
-      
-      <section id="mapSection" class="hidden">
-        <h2>Vehicle Locations</h2>
-        <div id="map" style="height: 400px; width: 100%;"></div>
-      </section>
-    </main>
+        </div>
+      </main>
+    </div>
+    
+    <footer>
+      <p>&copy; 2025 Transit Management System | Simplified Demo</p>
+    </footer>
   </div>
   
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
+  <!-- Vehicle detail modal -->
+  <div class="modal" id="vehicle-modal">
+    <div class="modal-content">
+      <span class="close" id="close-modal">&times;</span>
+      <h2>Vehicle Details</h2>
+      <div id="vehicle-details"></div>
+      <div class="modal-actions">
+        <button id="update-location" class="btn btn-primary">Update Location</button>
+        <button id="delete-vehicle" class="btn btn-danger">Delete Vehicle</button>
+      </div>
+    </div>
+  </div>
+  
   <script src="/socket.io/socket.io.js"></script>
   <script src="app.js"></script>
 </body>
