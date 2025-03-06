@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Center on Calgary downtown
       const calgaryCenter = { lat: 51.0447, lng: -114.0719 };
       
+      console.log('Initializing map with center:', calgaryCenter);
+      
       map = new google.maps.Map(document.getElementById('map'), {
         center: calgaryCenter,
         zoom: 12,
@@ -43,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       // Initialize directions service
+      console.log('Initializing Google Maps DirectionsService');
       directionsService = new google.maps.DirectionsService();
       
       // Initialize autocomplete for address fields
@@ -56,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
       endAutocomplete.setOptions({ strictBounds: true });
       
       // Load vehicles after map is initialized
+      console.log('Map initialized, fetching vehicles...');
       fetchVehicles();
     }
     
@@ -100,15 +104,18 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Only update the map if the vehicle data has changed
       if (JSON.stringify(prevVehicles) !== JSON.stringify(vehicles)) {
+        console.log('Vehicle data changed, updating map...');
         updateVehiclesOnMap();
       }
     });
 
     // Fetch vehicles from API
     function fetchVehicles() {
+      console.log('Fetching vehicles from API...');
       fetch('/api/vehicles')
         .then(response => response.json())
         .then(data => {
+          console.log('Received vehicles data:', data);
           vehicles = data;
           renderVehicleList();
           updateVehiclesOnMap();
@@ -122,8 +129,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Updated updateVehiclesOnMap function in app.js
 
 function updateVehiclesOnMap() {
+    console.log('==== UPDATING VEHICLES ON MAP ====');
+    console.log(`Found ${vehicles.length} vehicles to process`);
+    
     // Do not clear simulation intervals to avoid interrupting ongoing movement.
     // Clear only markers and polylines.
+    console.log('Clearing existing markers and polylines');
     Object.values(markers).forEach(marker => marker.setMap(null));
     markers = {};
     
@@ -136,22 +147,44 @@ function updateVehiclesOnMap() {
     
     // Add markers and routes for each vehicle
     vehicles.forEach(vehicle => {
+      console.log(`Processing vehicle ${vehicle.id} (${vehicle.vehicleId}), status: ${vehicle.status}`);
+      
       if (vehicle.startLocation && vehicle.endLocation) {
+        console.log(`Vehicle ${vehicle.id} has both start and end locations:`, {
+          start: vehicle.startLocation,
+          end: vehicle.endLocation
+        });
         createVehicleMarker(vehicle);
+        
         // Only set up simulation if it isn't already running and if the vehicle is active.
         if (!updateIntervals[vehicle.id] && vehicle.status === 'active' && vehicle.speed > 0) {
+          console.log(`Vehicle ${vehicle.id} is active with speed ${vehicle.speed}, calculating route...`);
           calculateAndDisplayRoute(vehicle);
+        } else {
+          if (updateIntervals[vehicle.id]) {
+            console.log(`Vehicle ${vehicle.id} already has an active simulation`);
+          } else if (vehicle.status !== 'active') {
+            console.log(`Vehicle ${vehicle.id} is not active (status: ${vehicle.status}), skipping route calculation`);
+          } else if (vehicle.speed <= 0) {
+            console.log(`Vehicle ${vehicle.id} has zero or negative speed (${vehicle.speed}), skipping route calculation`);
+          }
         }
       } else if (vehicle.location) {
+        console.log(`Vehicle ${vehicle.id} has only location without start/end points, creating simple marker`);
         // For vehicles without routes, just create a marker at their current location.
         createSimpleMarker(vehicle);
+      } else {
+        console.log(`Vehicle ${vehicle.id} has no location data, cannot place on map`);
       }
     });
+    
+    console.log('==== FINISHED UPDATING MAP ====');
   }
   
     
     // Create a simple marker for vehicles without routes
     function createSimpleMarker(vehicle) {
+      console.log(`Creating simple marker for vehicle ${vehicle.id}`);
       if (vehicle.location) {
         const marker = new google.maps.Marker({
           position: vehicle.location,
@@ -169,12 +202,17 @@ function updateVehiclesOnMap() {
         
         marker.addListener('click', () => showVehicleDetails(vehicle));
         markers[vehicle.id] = marker;
+        console.log(`Simple marker created for vehicle ${vehicle.id}`);
+      } else {
+        console.log(`Cannot create marker for vehicle ${vehicle.id}: no location data`);
       }
     }
     
     // Create a vehicle marker with proper heading
     function createVehicleMarker(vehicle) {
+      console.log(`Creating vehicle marker for vehicle ${vehicle.id}`);
       if (!vehicle.location) {
+        console.log(`Vehicle ${vehicle.id} has no location, using startLocation`);
         vehicle.location = vehicle.startLocation; // Use start location if no current location
       }
       
@@ -194,11 +232,20 @@ function updateVehiclesOnMap() {
       
       marker.addListener('click', () => showVehicleDetails(vehicle));
       markers[vehicle.id] = marker;
+      console.log(`Vehicle marker created for vehicle ${vehicle.id} at position:`, vehicle.location);
     }
     
     // Calculate and display route with waypoints that follow roads
     function calculateAndDisplayRoute(vehicle) {
-      if (!vehicle.startLocation || !vehicle.endLocation) return;
+      console.log(`==== CALCULATING ROUTE for vehicle ${vehicle.id} ====`);
+      
+      if (!vehicle.startLocation || !vehicle.endLocation) {
+        console.error(`Missing start or end location for vehicle ${vehicle.id}`);
+        return;
+      }
+      
+      console.log(`Route start: [${vehicle.startLocation.lat}, ${vehicle.startLocation.lng}]`);
+      console.log(`Route end: [${vehicle.endLocation.lat}, ${vehicle.endLocation.lng}]`);
       
       const request = {
         origin: vehicle.startLocation,
@@ -206,15 +253,22 @@ function updateVehiclesOnMap() {
         travelMode: google.maps.TravelMode.DRIVING
       };
       
+      console.log(`Sending directions request to Google Maps API for vehicle ${vehicle.id}`);
       directionsService.route(request, function(result, status) {
+        console.log(`Received route result for vehicle ${vehicle.id}: Status = ${status}`);
+        
         if (status === 'OK') {
+          console.log(`Successfully calculated route for vehicle ${vehicle.id}`);
+          
           // Store the route details for movement simulation
           vehicle.routeDetails = result;
           
           // Extract path from routes
           const path = result.routes[0].overview_path;
+          console.log(`Route contains ${path.length} waypoints`);
           
           // Create a polyline for the route
+          console.log(`==== DRAWING LINE for vehicle ${vehicle.id} ====`);
           const polyline = new google.maps.Polyline({
             path: path,
             geodesic: true,
@@ -225,6 +279,7 @@ function updateVehiclesOnMap() {
           
           polyline.setMap(map);
           routePolylines[vehicle.id] = polyline;
+          console.log(`Polyline added to map for vehicle ${vehicle.id}`);
           
           // Store route points to use for movement simulation
           vehicle.routePoints = path.map(point => ({
@@ -235,15 +290,19 @@ function updateVehiclesOnMap() {
           // Calculate initial heading
           if (path.length > 1) {
             vehicle.heading = calculateHeading(path[0], path[1]);
+            console.log(`Initial heading for vehicle ${vehicle.id}: ${vehicle.heading}°`);
             updateMarkerHeading(vehicle.id, vehicle.heading);
           }
           
           // Set up simulation if vehicle is active
           if (vehicle.status === 'active' && vehicle.speed > 0) {
+            console.log(`==== STARTING SIMULATION for vehicle ${vehicle.id} ====`);
             setupMovementSimulation(vehicle);
+          } else {
+            console.log(`Vehicle ${vehicle.id} is not active or has zero speed. Simulation not started.`);
           }
         } else {
-          console.error('Directions request failed due to ' + status);
+          console.error(`Directions request failed due to ${status} for vehicle ${vehicle.id}`);
         }
       });
     }
@@ -268,14 +327,17 @@ function updateVehiclesOnMap() {
     
     // Set up movement simulation for vehicle along its route
     function setupMovementSimulation(vehicle) {
+      console.log(`Setting up movement simulation for vehicle ${vehicle.id}`);
+      
       // Clear existing interval if any
       if (updateIntervals[vehicle.id]) {
+        console.log(`Clearing existing interval for vehicle ${vehicle.id}`);
         clearInterval(updateIntervals[vehicle.id]);
         delete updateIntervals[vehicle.id];
       }
       
       if (!vehicle.routePoints || vehicle.routePoints.length < 2) {
-        console.log('Not enough route points for vehicle', vehicle.id);
+        console.error(`Not enough route points for vehicle ${vehicle.id}: ${vehicle.routePoints ? vehicle.routePoints.length : 0} points`);
         return;
       }
       
@@ -299,21 +361,25 @@ function updateVehiclesOnMap() {
             currentRouteIndex = index;
           }
         });
+        
+        console.log(`Found closest point at index ${currentRouteIndex} (distance: ${minDistance}m)`);
       }
       
       // Make sure we're not at the end of the route
       if (currentRouteIndex >= vehicle.routePoints.length - 1) {
+        console.log(`Current index ${currentRouteIndex} is at the end of route, resetting to 0`);
         currentRouteIndex = 0; // Reset to start if at the end
       }
       
       // Calculate speed in meters per second from km/h
       const speedMPS = (vehicle.speed || 30) * (1000 / 3600);
       
-      console.log(`Vehicle ${vehicle.id} starting at route index ${currentRouteIndex}, speed: ${speedMPS} m/s`);
+      console.log(`Vehicle ${vehicle.id} starting at route index ${currentRouteIndex}, speed: ${vehicle.speed} km/h (${speedMPS} m/s)`);
       
       // Store local copy of the route points to avoid issues with point manipulation
       const routePoints = [...vehicle.routePoints];
       
+      console.log(`Starting interval for vehicle movement simulation (${vehicle.id})`);
       // Update position every 2 seconds
       updateIntervals[vehicle.id] = setInterval(() => {
         if (currentRouteIndex >= routePoints.length - 1) {
@@ -402,6 +468,8 @@ function updateVehiclesOnMap() {
         });
         
       }, 2000); // Update every 2 seconds
+      
+      console.log(`Movement simulation interval started for vehicle ${vehicle.id}`);
     }
 
     // Return a color based on vehicle type
@@ -443,6 +511,7 @@ function updateVehiclesOnMap() {
     
     // Convert address to coordinates using Geocoding API
     function geocodeAddress(address) {
+      console.log(`Geocoding address: "${address}"`);
       return new Promise((resolve, reject) => {
         const geocoder = new google.maps.Geocoder();
         
@@ -451,12 +520,16 @@ function updateVehiclesOnMap() {
           bounds: calgaryBounds,
           componentRestrictions: { country: 'CA' }
         }, (results, status) => {
+          console.log(`Geocoding result: ${status}`);
           if (status === 'OK') {
-            resolve({
+            const location = {
               lat: results[0].geometry.location.lat(),
               lng: results[0].geometry.location.lng()
-            });
+            };
+            console.log(`Geocoded location:`, location);
+            resolve(location);
           } else {
+            console.error(`Geocoding failed: ${status}`);
             reject(new Error('Geocoding failed due to: ' + status));
           }
         });
@@ -539,6 +612,7 @@ function updateVehiclesOnMap() {
     
     // Update vehicle speed
     function updateVehicleSpeed(vehicleId, speed) {
+      console.log(`Updating speed for vehicle ${vehicleId} to ${speed} km/h`);
       fetch(`/api/vehicles/${vehicleId}/speed`, {
         method: 'PATCH',
         headers: {
@@ -564,6 +638,7 @@ function updateVehiclesOnMap() {
           if (updatedVehicle.status === 'active' && 
               updatedVehicle.startLocation && 
               updatedVehicle.endLocation) {
+            console.log(`Restarting movement simulation with new speed: ${speed} km/h`);
             setupMovementSimulation(updatedVehicle);
           }
         }
@@ -609,17 +684,31 @@ function updateVehiclesOnMap() {
       const startAddress = document.getElementById('startAddress').value;
       const endAddress = document.getElementById('endAddress').value;
       
+      console.log(`New vehicle form data:`, {
+        vehicleId,
+        type,
+        capacity,
+        status,
+        speed,
+        startAddress,
+        endAddress
+      });
+      
       try {
         // Process start and end addresses if provided
         let startLocation = null;
         let endLocation = null;
         
         if (startAddress) {
+          console.log(`Geocoding start address: "${startAddress}"`);
           startLocation = await geocodeAddress(startAddress + ', Calgary, AB, Canada');
+          console.log(`Start location geocoded:`, startLocation);
         }
         
         if (endAddress) {
+          console.log(`Geocoding end address: "${endAddress}"`);
           endLocation = await geocodeAddress(endAddress + ', Calgary, AB, Canada');
+          console.log(`End location geocoded:`, endLocation);
         }
         
         // Use start location for vehicle's current location, or a default location
@@ -642,9 +731,10 @@ function updateVehiclesOnMap() {
           endAddress
         };
         
-        console.log('New vehicle data:', newVehicle);
+        console.log('New vehicle data prepared:', newVehicle);
         
         // Send to server via REST API
+        console.log('Sending vehicle data to server...');
         fetch('/api/vehicles', {
           method: 'POST',
           headers: {
@@ -679,6 +769,7 @@ function updateVehiclesOnMap() {
       
       // Toggle vehicle status between active and inactive
       const newStatus = currentVehicle.status === 'active' ? 'inactive' : 'active';
+      console.log(`Toggling vehicle ${currentVehicle.id} status from ${currentVehicle.status} to ${newStatus}`);
       
       fetch(`/api/vehicles/${currentVehicle.id}/status`, {
         method: 'PATCH',
@@ -703,10 +794,12 @@ function updateVehiclesOnMap() {
         if (newStatus === 'active' && 
             updatedVehicle.startLocation && 
             updatedVehicle.endLocation) {
+          console.log(`Vehicle activated with route, calculating and displaying route...`);
           calculateAndDisplayRoute(updatedVehicle);
         } else if (newStatus === 'inactive') {
           // Stop simulation
           if (updateIntervals[updatedVehicle.id]) {
+            console.log(`Stopping movement simulation for now inactive vehicle ${updatedVehicle.id}`);
             clearInterval(updateIntervals[updatedVehicle.id]);
             delete updateIntervals[updatedVehicle.id];
           }
@@ -727,6 +820,7 @@ function updateVehiclesOnMap() {
         
         // First, clear interval if exists
         if (updateIntervals[currentVehicle.id]) {
+          console.log(`Clearing movement interval for vehicle being deleted: ${currentVehicle.id}`);
           clearInterval(updateIntervals[currentVehicle.id]);
           delete updateIntervals[currentVehicle.id];
         }
@@ -750,4 +844,5 @@ function updateVehiclesOnMap() {
     
     // Initialize the map when page loads
     initMap();
-  });
+
+});

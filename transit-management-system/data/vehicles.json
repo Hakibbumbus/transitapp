@@ -1,98 +1,50 @@
 [
   {
-    "vehicleId": "2",
+    "vehicleId": "100",
     "type": "bus",
     "capacity": 100,
     "status": "active",
-    "speed": 94,
+    "speed": 65,
     "location": {
-      "lat": 51.0755166,
-      "lng": -114.1297479
+      "lat": 51.08283,
+      "lng": -114.13419
     },
     "startLocation": {
-      "lat": 51.0755166,
-      "lng": -114.1297479
+      "lat": 51.0783739,
+      "lng": -114.134666
     },
     "endLocation": {
-      "lat": 51.1007111,
-      "lng": -114.1405724
+      "lat": 51.1001239,
+      "lng": -114.140082
     },
-    "startAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
-    "endAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
-    "id": "1741234533837",
-    "lastUpdated": "2025-03-06T04:17:21.162Z",
-    "heading": 0
+    "startAddress": "University of Calgary, University Drive Northwest, Calgary, AB, Canada",
+    "endAddress": "Sir Winston Churchill High School | Calgary Board of Education, Northland Drive Northwest, Calgary, AB, Canada",
+    "id": "1741275711687",
+    "lastUpdated": "2025-03-06T15:43:01.887Z",
+    "heading": -0.2789976885457355
   },
   {
-    "vehicleId": "3",
+    "vehicleId": "122",
     "type": "bus",
-    "capacity": 55,
-    "status": "active",
-    "speed": 30,
-    "location": {
-      "lat": 51.0755166,
-      "lng": -114.1297479
-    },
-    "startLocation": {
-      "lat": 51.0755166,
-      "lng": -114.1297479
-    },
-    "endLocation": {
-      "lat": 51.1007111,
-      "lng": -114.1405724
-    },
-    "startAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
-    "endAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
-    "id": "1741235424821",
-    "lastUpdated": "2025-03-06T04:30:24.821Z",
-    "heading": 0
-  },
-  {
-    "vehicleId": "10",
-    "type": "bus",
-    "capacity": 74,
+    "capacity": 12,
     "status": "active",
     "speed": 70,
     "location": {
-      "lat": 51.1007111,
-      "lng": -114.1405724
+      "lat": 51.03883312705108,
+      "lng": -114.23105394132058
     },
     "startLocation": {
-      "lat": 51.1007111,
-      "lng": -114.1405724
+      "lat": 51.038899,
+      "lng": -114.235794
     },
     "endLocation": {
-      "lat": 51.0755166,
-      "lng": -114.1297479
+      "lat": 51.1197834,
+      "lng": -114.0316572
     },
-    "startAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
-    "endAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
-    "id": "1741235892147",
-    "lastUpdated": "2025-03-06T04:40:10.395Z",
-    "heading": 0
-  },
-  {
-    "vehicleId": "144",
-    "type": "bus",
-    "capacity": 50,
-    "status": "active",
-    "speed": 80,
-    "location": {
-      "lat": 51.0755166,
-      "lng": -114.1297479
-    },
-    "startLocation": {
-      "lat": 51.0755166,
-      "lng": -114.1297479
-    },
-    "endLocation": {
-      "lat": 51.1007111,
-      "lng": -114.1405724
-    },
-    "startAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
-    "endAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
-    "id": "1741236078079",
-    "lastUpdated": "2025-03-06T04:41:18.079Z",
-    "heading": 0
+    "startAddress": "17 Avenue Southwest, Calgary, AB, Canada",
+    "endAddress": "24 Aero Drive Northeast, Calgary, AB, Canada",
+    "id": "1741275763380",
+    "lastUpdated": "2025-03-06T15:43:01.561Z",
+    "heading": 95.49186813542266
   }
 ]
