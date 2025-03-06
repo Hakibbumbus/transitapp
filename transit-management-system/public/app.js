@@ -18,9 +18,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let vehicles = [];
     let currentVehicle = null;
     let map = null;
-    let markers = [];
+    let markers = {};
+    let routePolylines = {};
     let directionsService = null;
-    let directionsRenderer = null;
+    let updateIntervals = {}; // Store interval IDs for each vehicle
     
     // Define Calgary bounds for map restriction
     const calgarySW = { lat: 50.8, lng: -114.3 }; // Southwest corner
@@ -43,10 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Initialize directions service
       directionsService = new google.maps.DirectionsService();
-      directionsRenderer = new google.maps.DirectionsRenderer({
-        map: map,
-        suppressMarkers: true // We'll create custom markers
-      });
       
       // Initialize autocomplete for address fields
       const startAutocomplete = new google.maps.places.Autocomplete(startAddressInput);
@@ -78,6 +75,10 @@ document.addEventListener('DOMContentLoaded', function() {
       connectionStatus.textContent = 'Disconnected';
       connectionStatus.classList.remove('connected');
       connectionStatus.classList.add('disconnected');
+      
+      // Clear all update intervals on disconnect
+      Object.values(updateIntervals).forEach(intervalId => clearInterval(intervalId));
+      updateIntervals = {};
     });
     
     socket.on('connect_error', function(error) {
@@ -91,9 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('Received vehicle update:', data);
       vehicles = data;
       renderVehicleList();
-      updateMapMarkers();
+      updateVehiclesOnMap();
     });
-    
+
     // Fetch vehicles from API
     function fetchVehicles() {
       fetch('/api/vehicles')
@@ -101,59 +102,90 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
           vehicles = data;
           renderVehicleList();
-          updateMapMarkers();
+          updateVehiclesOnMap();
         })
         .catch(error => {
           console.error('Error fetching vehicles:', error);
         });
     }
     
-    // Update map markers
-    function updateMapMarkers() {
-      // Clear existing markers
-      markers.forEach(marker => marker.setMap(null));
-      markers = [];
+    // Update vehicles on map - create markers and set up routes
+    function updateVehiclesOnMap() {
+      // Clear all existing intervals
+      Object.values(updateIntervals).forEach(intervalId => clearInterval(intervalId));
+      updateIntervals = {};
       
-      // Add markers for each vehicle
+      // Clear all existing markers and polylines
+      Object.values(markers).forEach(marker => marker.setMap(null));
+      markers = {};
+      
+      Object.values(routePolylines).forEach(polyline => {
+        if (polyline && polyline.setMap) {
+          polyline.setMap(null);
+        }
+      });
+      routePolylines = {};
+      
+      // Add markers and routes for each vehicle
       vehicles.forEach(vehicle => {
-        if (vehicle.location) {
-          const marker = new google.maps.Marker({
-            position: vehicle.location,
-            map: map,
-            title: vehicle.vehicleId,
-            icon: {
-              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-              scale: 5,
-              fillColor: getVehicleColor(vehicle.type),
-              fillOpacity: 1,
-              strokeWeight: 1,
-              rotation: 0 // Vehicle heading
-            }
-          });
-          
-          marker.addListener('click', () => showVehicleDetails(vehicle));
-          markers.push(marker);
-          
-          // Display route if start and end locations exist
-          if (vehicle.startLocation && vehicle.endLocation) {
-            displayRoute(vehicle);
-          }
+        if (vehicle.startLocation && vehicle.endLocation) {
+          createVehicleMarker(vehicle);
+          calculateAndDisplayRoute(vehicle);
+        } else if (vehicle.location) {
+          // For vehicles without routes, just create a marker at their current location
+          createSimpleMarker(vehicle);
         }
       });
     }
     
-    // Return a color based on vehicle type
-    function getVehicleColor(type) {
-      switch(type) {
-        case 'bus': return '#3a86ff';
-        case 'van': return '#ff006e';
-        case 'specialized': return '#ffbe0b';
-        default: return '#38b000';
+    // Create a simple marker for vehicles without routes
+    function createSimpleMarker(vehicle) {
+      if (vehicle.location) {
+        const marker = new google.maps.Marker({
+          position: vehicle.location,
+          map: map,
+          title: vehicle.vehicleId,
+          icon: {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            scale: 5,
+            fillColor: getVehicleColor(vehicle.type),
+            fillOpacity: 1,
+            strokeWeight: 1,
+            rotation: 0
+          }
+        });
+        
+        marker.addListener('click', () => showVehicleDetails(vehicle));
+        markers[vehicle.id] = marker;
       }
     }
     
-    // Display route for a vehicle
-    function displayRoute(vehicle) {
+    // Create a vehicle marker with proper heading
+    function createVehicleMarker(vehicle) {
+      if (!vehicle.location) {
+        vehicle.location = vehicle.startLocation; // Use start location if no current location
+      }
+      
+      const marker = new google.maps.Marker({
+        position: vehicle.location,
+        map: map,
+        title: vehicle.vehicleId,
+        icon: {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          scale: 5,
+          fillColor: getVehicleColor(vehicle.type),
+          fillOpacity: 1,
+          strokeWeight: 1,
+          rotation: vehicle.heading || 0 // Heading in degrees
+        }
+      });
+      
+      marker.addListener('click', () => showVehicleDetails(vehicle));
+      markers[vehicle.id] = marker;
+    }
+    
+    // Calculate and display route with waypoints that follow roads
+    function calculateAndDisplayRoute(vehicle) {
       if (!vehicle.startLocation || !vehicle.endLocation) return;
       
       const request = {
@@ -164,23 +196,168 @@ document.addEventListener('DOMContentLoaded', function() {
       
       directionsService.route(request, function(result, status) {
         if (status === 'OK') {
-          // Create a new renderer for each route
-          const renderer = new google.maps.DirectionsRenderer({
-            map: map,
-            directions: result,
-            suppressMarkers: true,
-            polylineOptions: {
-              strokeColor: getVehicleColor(vehicle.type),
-              strokeWeight: 4
-            }
+          // Store the route details for movement simulation
+          vehicle.routeDetails = result;
+          
+          // Extract path from routes
+          const path = result.routes[0].overview_path;
+          
+          // Create a polyline for the route
+          const polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: getVehicleColor(vehicle.type),
+            strokeOpacity: 0.7,
+            strokeWeight: 4
           });
           
-          // Store renderer reference to clear it later
-          vehicle.directionsRenderer = renderer;
+          polyline.setMap(map);
+          routePolylines[vehicle.id] = polyline;
+          
+          // Store route points to use for movement simulation
+          vehicle.routePoints = path;
+          
+          // Calculate initial heading
+          if (path.length > 1) {
+            vehicle.heading = calculateHeading(path[0], path[1]);
+            updateMarkerHeading(vehicle.id, vehicle.heading);
+          }
+          
+          // Set up simulation if vehicle is active
+          if (vehicle.status === 'active' && vehicle.speed > 0) {
+            setupMovementSimulation(vehicle);
+          }
         } else {
           console.error('Directions request failed due to ' + status);
         }
       });
+    }
+    
+    // Calculate heading between two points (in degrees)
+    function calculateHeading(point1, point2) {
+      return google.maps.geometry.spherical.computeHeading(point1, point2);
+    }
+    
+    // Update marker heading
+    function updateMarkerHeading(vehicleId, heading) {
+      const marker = markers[vehicleId];
+      if (marker) {
+        const icon = marker.getIcon();
+        icon.rotation = heading;
+        marker.setIcon(icon);
+      }
+    }
+    
+    // Set up movement simulation for vehicle along its route
+    function setupMovementSimulation(vehicle) {
+      // Clear existing interval if any
+      if (updateIntervals[vehicle.id]) {
+        clearInterval(updateIntervals[vehicle.id]);
+      }
+      
+      if (!vehicle.routePoints || vehicle.routePoints.length < 2) {
+        return;
+      }
+      
+      // Determine vehicle's current position in the route
+      let currentRouteIndex = 0;
+      
+      // Find closest point on route to current location
+      if (vehicle.location && vehicle.routePoints.length > 0) {
+        let minDistance = Number.MAX_VALUE;
+        
+        vehicle.routePoints.forEach((point, index) => {
+          const distance = google.maps.geometry.spherical.computeDistanceBetween(
+            new google.maps.LatLng(vehicle.location.lat, vehicle.location.lng),
+            point
+          );
+          
+          if (distance < minDistance) {
+            minDistance = distance;
+            currentRouteIndex = index;
+          }
+        });
+      }
+      
+      // Calculate speed in meters per second from km/h
+      const speedMPS = (vehicle.speed || 30) * (1000 / 3600);
+      
+      // Update position every 2 seconds
+      updateIntervals[vehicle.id] = setInterval(() => {
+        if (currentRouteIndex >= vehicle.routePoints.length - 1) {
+          // Reached destination, stop movement
+          clearInterval(updateIntervals[vehicle.id]);
+          return;
+        }
+        
+        const currentPoint = vehicle.routePoints[currentRouteIndex];
+        const nextPoint = vehicle.routePoints[currentRouteIndex + 1];
+        
+        // Calculate distance between points
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(
+          currentPoint, nextPoint
+        );
+        
+        // Calculate how far the vehicle should move in 2 seconds
+        let distanceToMove = speedMPS * 2; // Speed * time (2 seconds)
+        
+        // If next point is closer than the distance to move, move to next point
+        if (distance <= distanceToMove) {
+          // Move to next point
+          vehicle.location = {
+            lat: nextPoint.lat(),
+            lng: nextPoint.lng()
+          };
+          
+          currentRouteIndex++;
+          
+          // Calculate new heading if there are more points
+          if (currentRouteIndex < vehicle.routePoints.length - 1) {
+            vehicle.heading = calculateHeading(
+              vehicle.routePoints[currentRouteIndex],
+              vehicle.routePoints[currentRouteIndex + 1]
+            );
+          }
+        } else {
+          // Interpolate position along the path
+          const fraction = distanceToMove / distance;
+          const newPosition = google.maps.geometry.spherical.interpolate(
+            currentPoint, nextPoint, fraction
+          );
+          
+          vehicle.location = {
+            lat: newPosition.lat(),
+            lng: newPosition.lng()
+          };
+          
+          // Update current point for next interval
+          vehicle.routePoints[currentRouteIndex] = newPosition;
+        }
+        
+        // Update marker position and heading
+        if (markers[vehicle.id]) {
+          markers[vehicle.id].setPosition(vehicle.location);
+          updateMarkerHeading(vehicle.id, vehicle.heading);
+        }
+        
+        // Send update to server
+        socket.emit('update-location', {
+          id: vehicle.id,
+          location: vehicle.location,
+          heading: vehicle.heading
+        });
+        
+      }, 2000); // Update every 2 seconds
+    }
+
+    // Return a color based on vehicle type
+    function getVehicleColor(type) {
+      switch(type) {
+        case 'bus': return '#3a86ff';
+        case 'van': return '#ff006e';
+        case 'specialized': return '#ffbe0b';
+        default: return '#38b000';
+      }
     }
     
     // Render the vehicle list
@@ -201,6 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
         vehicleCard.innerHTML = `
           <div class="vehicle-id">${vehicle.vehicleId || 'No ID'}</div>
           <div class="vehicle-type">${vehicle.type || 'Unknown'}</div>
+          <div class="vehicle-speed">${vehicle.speed || 0} km/h</div>
           <div class="status ${vehicle.status || 'unknown'}">${vehicle.status || 'Unknown'}</div>
         `;
         
@@ -239,6 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Format display for the locations
       const startLocationText = vehicle.startAddress || 'Not specified';
       const endLocationText = vehicle.endAddress || 'Not specified';
+      const currentSpeed = vehicle.speed || 30; // Default to 30 km/h if not set
       
       vehicleDetails.innerHTML = `
         <div class="detail-row">
@@ -258,6 +437,13 @@ document.addEventListener('DOMContentLoaded', function() {
           <div>${vehicle.status || 'Unknown'}</div>
         </div>
         <div class="detail-row">
+          <div class="detail-label">Speed:</div>
+          <div>
+            <input type="range" id="speed-slider" min="5" max="100" value="${currentSpeed}" />
+            <span id="speed-value">${currentSpeed}</span> km/h
+          </div>
+        </div>
+        <div class="detail-row">
           <div class="detail-label">Start:</div>
           <div>${startLocationText}</div>
         </div>
@@ -273,11 +459,61 @@ document.addEventListener('DOMContentLoaded', function() {
       
       vehicleModal.style.display = 'block';
       
+      // Add event listener for speed slider
+      const speedSlider = document.getElementById('speed-slider');
+      const speedValueDisplay = document.getElementById('speed-value');
+      
+      speedSlider.addEventListener('input', function() {
+        speedValueDisplay.textContent = this.value;
+      });
+      
+      speedSlider.addEventListener('change', function() {
+        // Update vehicle speed
+        updateVehicleSpeed(currentVehicle.id, parseInt(this.value));
+      });
+      
       // Center map on this vehicle
       if (vehicle.location && map) {
         map.setCenter(vehicle.location);
         map.setZoom(14);
       }
+    }
+    
+    // Update vehicle speed
+    function updateVehicleSpeed(vehicleId, speed) {
+      fetch(`/api/vehicles/${vehicleId}/speed`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ speed })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to update vehicle speed');
+        }
+        return response.json();
+      })
+      .then(updatedVehicle => {
+        console.log('Vehicle speed updated:', updatedVehicle);
+        
+        // Update local vehicle data
+        const index = vehicles.findIndex(v => v.id === vehicleId);
+        if (index !== -1) {
+          vehicles[index] = updatedVehicle;
+          
+          // Restart movement simulation with new speed
+          if (updatedVehicle.status === 'active' && 
+              updatedVehicle.startLocation && 
+              updatedVehicle.endLocation) {
+            setupMovementSimulation(updatedVehicle);
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error updating vehicle speed:', error);
+        alert('Failed to update vehicle speed: ' + error.message);
+      });
     }
     
     // Close modal
@@ -294,6 +530,14 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
+    // Handle speed slider in the form
+    const speedSlider = document.getElementById('speed');
+    const speedDisplay = document.getElementById('speed-display');
+    
+    speedSlider.addEventListener('input', function() {
+      speedDisplay.textContent = this.value;
+    });
+    
     // Add vehicle form submission
     addVehicleForm.addEventListener('submit', async function(event) {
       event.preventDefault();
@@ -303,6 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const type = document.getElementById('type').value;
       const capacity = parseInt(document.getElementById('capacity').value);
       const status = document.getElementById('status').value;
+      const speed = parseInt(document.getElementById('speed').value || 30); // Default to 30 km/h
       const startAddress = document.getElementById('startAddress').value;
       const endAddress = document.getElementById('endAddress').value;
       
@@ -331,6 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
           type,
           capacity,
           status,
+          speed,
           location: vehicleLocation,
           startLocation,
           endLocation,
@@ -372,40 +618,45 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLocationBtn.addEventListener('click', function() {
       if (!currentVehicle) return;
       
-      console.log('Updating location for vehicle:', currentVehicle.id);
+      // Toggle vehicle status between active and inactive
+      const newStatus = currentVehicle.status === 'active' ? 'inactive' : 'active';
       
-      // If the vehicle has start and end locations, move it along the route
-      if (currentVehicle.startLocation && currentVehicle.endLocation) {
-        // This is a simplistic approach to simulate movement along a route
-        // In a real system, you'd use the actual route points
-        const start = currentVehicle.startLocation;
-        const end = currentVehicle.endLocation;
+      fetch(`/api/vehicles/${currentVehicle.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to update vehicle status');
+        }
+        return response.json();
+      })
+      .then(updatedVehicle => {
+        console.log('Vehicle status updated:', updatedVehicle);
         
-        // Calculate a point between start and end
-        const progress = Math.random(); // Random value between 0 and 1 for demo
-        const newLocation = {
-          lat: start.lat + (end.lat - start.lat) * progress,
-          lng: start.lng + (end.lng - start.lng) * progress
-        };
+        // Update UI
+        vehicleModal.style.display = 'none';
         
-        socket.emit('update-location', {
-          id: currentVehicle.id,
-          location: newLocation
-        });
-      } else {
-        // If no route, just move randomly in the Calgary area
-        const newLocation = {
-          lat: 51.0447 + (Math.random() - 0.5) * 0.05,
-          lng: -114.0719 + (Math.random() - 0.5) * 0.05
-        };
-        
-        socket.emit('update-location', {
-          id: currentVehicle.id,
-          location: newLocation
-        });
-      }
-      
-      vehicleModal.style.display = 'none';
+        // If we're activating the vehicle and it has a route, start simulation
+        if (newStatus === 'active' && 
+            updatedVehicle.startLocation && 
+            updatedVehicle.endLocation) {
+          setupMovementSimulation(updatedVehicle);
+        } else if (newStatus === 'inactive') {
+          // Stop simulation
+          if (updateIntervals[updatedVehicle.id]) {
+            clearInterval(updateIntervals[updatedVehicle.id]);
+            delete updateIntervals[updatedVehicle.id];
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error updating vehicle status:', error);
+        alert('Failed to update vehicle status: ' + error.message);
+      });
     });
     
     // Delete vehicle
@@ -414,6 +665,12 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (confirm(`Are you sure you want to delete vehicle ${currentVehicle.vehicleId}?`)) {
         console.log('Deleting vehicle:', currentVehicle.id);
+        
+        // First, clear interval if exists
+        if (updateIntervals[currentVehicle.id]) {
+          clearInterval(updateIntervals[currentVehicle.id]);
+          delete updateIntervals[currentVehicle.id];
+        }
         
         fetch(`/api/vehicles/${currentVehicle.id}`, {
           method: 'DELETE'

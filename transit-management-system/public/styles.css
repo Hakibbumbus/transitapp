@@ -122,6 +122,44 @@ input, select {
   font-size: 1rem;
 }
 
+/* Style for range inputs */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: var(--light);
+  border-radius: 4px;
+  outline: none;
+  width: 80%;
+  vertical-align: middle;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--primary);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--primary);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+#speed-display, #speed-value {
+  display: inline-block;
+  width: 40px;
+  margin-left: 8px;
+  text-align: right;
+  font-weight: 600;
+}
+
 .btn {
   display: inline-block;
   background-color: var(--primary);
@@ -187,7 +225,7 @@ input, select {
   margin-bottom: 0.5rem;
 }
 
-.vehicle-card .vehicle-type {
+.vehicle-card .vehicle-type, .vehicle-card .vehicle-speed {
   font-size: 0.9rem;
   color: var(--gray);
 }
@@ -210,7 +248,7 @@ input, select {
   color: var(--warning);
 }
 
-.vehicle-card .status.out-of-service {
+.vehicle-card .status.out-of-service, .vehicle-card .status.inactive {
   background-color: rgba(229, 56, 59, 0.1);
   color: var(--danger);
 }
@@ -273,6 +311,7 @@ footer {
 .detail-row {
   display: flex;
   margin-bottom: 0.75rem;
+  align-items: center;
 }
 
 .detail-label {

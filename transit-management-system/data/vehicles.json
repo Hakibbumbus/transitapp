@@ -1,34 +1,13 @@
 [
   {
-    "vehicleId": "11111",
+    "vehicleId": "2",
     "type": "bus",
     "capacity": 100,
     "status": "active",
+    "speed": 50,
     "location": {
-      "lat": 51.121624625360944,
-      "lng": -114.13531484503136
-    },
-    "startLocation": {
-      "lat": 51.1438051,
-      "lng": -114.1362022
-    },
-    "endLocation": {
-      "lat": 51.0759505,
-      "lng": -114.1334876
-    },
-    "startAddress": "104 Hampstead Mews NW",
-    "endAddress": "2500 University Dr NW",
-    "id": "1741233420128",
-    "lastUpdated": "2025-03-06T03:58:23.667Z"
-  },
-  {
-    "vehicleId": "101010",
-    "type": "van",
-    "capacity": 5,
-    "status": "active",
-    "location": {
-      "lat": 51.08942316500355,
-      "lng": -114.13572268072123
+      "lat": 51.0755166,
+      "lng": -114.1297479
     },
     "startLocation": {
       "lat": 51.0755166,
@@ -40,7 +19,8 @@
     },
     "startAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
     "endAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
-    "id": "1741233585652",
-    "lastUpdated": "2025-03-06T04:00:30.092Z"
+    "id": "1741234533837",
+    "lastUpdated": "2025-03-06T04:16:38.073Z",
+    "heading": 0
   }
 ]

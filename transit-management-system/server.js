@@ -20,6 +20,13 @@ let vehicles = [];
 try {
   const data = fs.readFileSync(path.join(__dirname, 'data', 'vehicles.json'), 'utf8');
   vehicles = JSON.parse(data);
+  
+  // Ensure all vehicles have a speed property
+  vehicles = vehicles.map(vehicle => ({
+    ...vehicle,
+    speed: vehicle.speed || 30, // Default speed is 30 km/h
+    heading: vehicle.heading || 0 // Default heading is 0 degrees (North)
+  }));
 } catch (err) {
   console.log('No existing vehicle data found, starting with empty array');
 }
@@ -46,6 +53,8 @@ app.post('/api/vehicles', (req, res) => {
   const vehicle = req.body;
   vehicle.id = Date.now().toString();
   vehicle.lastUpdated = new Date().toISOString();
+  vehicle.speed = vehicle.speed || 30; // Default speed
+  vehicle.heading = vehicle.heading || 0; // Default heading
   
   // Ensure we have the required fields
   vehicles.push(vehicle);
@@ -75,6 +84,42 @@ app.put('/api/vehicles/:id', (req, res) => {
   res.json(updatedVehicle);
 });
 
+// Update just the speed of a vehicle
+app.patch('/api/vehicles/:id/speed', (req, res) => {
+  const { id } = req.params;
+  const { speed } = req.body;
+  
+  const index = vehicles.findIndex(v => v.id === id);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Vehicle not found' });
+  }
+  
+  vehicles[index].speed = speed;
+  vehicles[index].lastUpdated = new Date().toISOString();
+  
+  saveVehicles();
+  io.emit('vehicle-update', vehicles);
+  res.json(vehicles[index]);
+});
+
+// Update just the status of a vehicle
+app.patch('/api/vehicles/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  const index = vehicles.findIndex(v => v.id === id);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Vehicle not found' });
+  }
+  
+  vehicles[index].status = status;
+  vehicles[index].lastUpdated = new Date().toISOString();
+  
+  saveVehicles();
+  io.emit('vehicle-update', vehicles);
+  res.json(vehicles[index]);
+});
+
 app.delete('/api/vehicles/:id', (req, res) => {
   const { id } = req.params;
   const index = vehicles.findIndex(v => v.id === id);
@@ -92,7 +137,7 @@ app.delete('/api/vehicles/:id', (req, res) => {
 // Route for updating just the vehicle location (simulating movement)
 app.patch('/api/vehicles/:id/location', (req, res) => {
   const { id } = req.params;
-  const { location } = req.body;
+  const { location, heading } = req.body;
   
   const vehicle = vehicles.find(v => v.id === id);
   if (!vehicle) {
@@ -100,6 +145,9 @@ app.patch('/api/vehicles/:id/location', (req, res) => {
   }
   
   vehicle.location = location;
+  if (heading !== undefined) {
+    vehicle.heading = heading;
+  }
   vehicle.lastUpdated = new Date().toISOString();
   saveVehicles();
   io.emit('vehicle-update', vehicles);
@@ -115,11 +163,14 @@ io.on('connection', (socket) => {
   
   // Listen for location updates
   socket.on('update-location', (data) => {
-    const { id, location } = data;
+    const { id, location, heading } = data;
     const vehicle = vehicles.find(v => v.id === id);
     
     if (vehicle) {
       vehicle.location = location;
+      if (heading !== undefined) {
+        vehicle.heading = heading;
+      }
       vehicle.lastUpdated = new Date().toISOString();
       saveVehicles();
       io.emit('vehicle-update', vehicles);
