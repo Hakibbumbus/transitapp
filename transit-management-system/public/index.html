@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <title>Transit Management System</title>
+  <title>Transit Management System - Calgary</title>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Transit Management System</h1>
+      <h1>Calgary Transit Management System</h1>
       <div class="connection-status" id="connection-status">Connecting...</div>
     </header>
     
@@ -42,6 +42,14 @@
               <option value="out-of-service">Out of Service</option>
             </select>
           </div>
+          <div class="form-group">
+            <label for="startAddress">Start Address</label>
+            <input type="text" id="startAddress" placeholder="Start location in Calgary">
+          </div>
+          <div class="form-group">
+            <label for="endAddress">End Address</label>
+            <input type="text" id="endAddress" placeholder="End location in Calgary">
+          </div>
           <button type="submit" class="btn">Add Vehicle</button>
         </form>
       </aside>
@@ -51,10 +59,6 @@
           <h2>Vehicle Map</h2>
           <div id="map">
             <!-- Map will be rendered here -->
-            <div class="map-placeholder">
-              <p>Map Visualization Area</p>
-              <p class="small">Vehicle positions are simulated in this demo</p>
-            </div>
           </div>
         </div>
         
@@ -69,7 +73,7 @@
     </div>
     
     <footer>
-      <p>&copy; 2025 Transit Management System | Simplified Demo</p>
+      <p>&copy; 2025 Calgary Transit Management System | Simplified Demo</p>
     </footer>
   </div>
   
@@ -86,7 +90,10 @@
     </div>
   </div>
   
+  <!-- Load scripts -->
   <script src="/socket.io/socket.io.js"></script>
+  <!-- Google Maps API - Replace YOUR_API_KEY with an actual Google Maps API key -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXCIHkw6dnuiVNwlNkBMApN6FVyBz5LBs&libraries=places"></script>
   <script src="app.js"></script>
 </body>
 </html>

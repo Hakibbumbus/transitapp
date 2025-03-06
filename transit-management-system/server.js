@@ -46,6 +46,8 @@ app.post('/api/vehicles', (req, res) => {
   const vehicle = req.body;
   vehicle.id = Date.now().toString();
   vehicle.lastUpdated = new Date().toISOString();
+  
+  // Ensure we have the required fields
   vehicles.push(vehicle);
   saveVehicles();
   io.emit('vehicle-update', vehicles);
@@ -85,6 +87,23 @@ app.delete('/api/vehicles/:id', (req, res) => {
   saveVehicles();
   io.emit('vehicle-update', vehicles);
   res.status(204).send();
+});
+
+// Route for updating just the vehicle location (simulating movement)
+app.patch('/api/vehicles/:id/location', (req, res) => {
+  const { id } = req.params;
+  const { location } = req.body;
+  
+  const vehicle = vehicles.find(v => v.id === id);
+  if (!vehicle) {
+    return res.status(404).json({ message: 'Vehicle not found' });
+  }
+  
+  vehicle.location = location;
+  vehicle.lastUpdated = new Date().toISOString();
+  saveVehicles();
+  io.emit('vehicle-update', vehicles);
+  res.json(vehicle);
 });
 
 // Socket.io setup
