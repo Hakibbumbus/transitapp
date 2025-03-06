@@ -4,7 +4,7 @@
     "type": "bus",
     "capacity": 100,
     "status": "active",
-    "speed": 50,
+    "speed": 94,
     "location": {
       "lat": 51.0755166,
       "lng": -114.1297479
@@ -20,7 +20,79 @@
     "startAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
     "endAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
     "id": "1741234533837",
-    "lastUpdated": "2025-03-06T04:16:38.073Z",
+    "lastUpdated": "2025-03-06T04:17:21.162Z",
+    "heading": 0
+  },
+  {
+    "vehicleId": "3",
+    "type": "bus",
+    "capacity": 55,
+    "status": "active",
+    "speed": 30,
+    "location": {
+      "lat": 51.0755166,
+      "lng": -114.1297479
+    },
+    "startLocation": {
+      "lat": 51.0755166,
+      "lng": -114.1297479
+    },
+    "endLocation": {
+      "lat": 51.1007111,
+      "lng": -114.1405724
+    },
+    "startAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
+    "endAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
+    "id": "1741235424821",
+    "lastUpdated": "2025-03-06T04:30:24.821Z",
+    "heading": 0
+  },
+  {
+    "vehicleId": "10",
+    "type": "bus",
+    "capacity": 74,
+    "status": "active",
+    "speed": 70,
+    "location": {
+      "lat": 51.1007111,
+      "lng": -114.1405724
+    },
+    "startLocation": {
+      "lat": 51.1007111,
+      "lng": -114.1405724
+    },
+    "endLocation": {
+      "lat": 51.0755166,
+      "lng": -114.1297479
+    },
+    "startAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
+    "endAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
+    "id": "1741235892147",
+    "lastUpdated": "2025-03-06T04:40:10.395Z",
+    "heading": 0
+  },
+  {
+    "vehicleId": "144",
+    "type": "bus",
+    "capacity": 50,
+    "status": "active",
+    "speed": 80,
+    "location": {
+      "lat": 51.0755166,
+      "lng": -114.1297479
+    },
+    "startLocation": {
+      "lat": 51.0755166,
+      "lng": -114.1297479
+    },
+    "endLocation": {
+      "lat": 51.1007111,
+      "lng": -114.1405724
+    },
+    "startAddress": "2500 University Dr NW, Calgary, AB T2N 1N4",
+    "endAddress": "5220 Northland Dr NW, Calgary, AB T2L 2J6",
+    "id": "1741236078079",
+    "lastUpdated": "2025-03-06T04:41:18.079Z",
     "heading": 0
   }
 ]
