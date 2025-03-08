@@ -1,50 +1,170 @@
 [
   {
-    "vehicleId": "100",
+    "vehicleId": "1000",
     "type": "bus",
     "capacity": 100,
     "status": "active",
+    "speed": 75,
+    "location": {
+      "lat": 51.04104,
+      "lng": -114.07422000000001
+    },
+    "startLocation": {
+      "lat": 51.04222,
+      "lng": -114.06176
+    },
+    "endLocation": {
+      "lat": 51.0410505,
+      "lng": -114.0746051
+    },
+    "startAddress": "123 11 Avenue Southeast, Calgary, AB, Canada",
+    "endAddress": "1215 5 Street Southwest, Calgary, AB, Canada",
+    "id": "1741277205555",
+    "lastUpdated": "2025-03-08T16:52:48.362Z",
+    "heading": -180
+  },
+  {
+    "vehicleId": "2",
+    "type": "bus",
+    "capacity": 214,
+    "status": "active",
+    "speed": 60,
+    "location": {
+      "lat": 51.09581000000001,
+      "lng": -114.04045
+    },
+    "startLocation": {
+      "lat": 51.0644636,
+      "lng": -113.9854352
+    },
+    "endLocation": {
+      "lat": 51.156031,
+      "lng": -114.0845939
+    },
+    "startAddress": "1316 33 Street Northeast, Calgary, AB, Canada",
+    "endAddress": "1100 Panorama Hills Drive Northwest, Calgary, AB, Canada",
+    "id": "1741277261560",
+    "lastUpdated": "2025-03-08T16:52:50.242Z",
+    "heading": -19.50742898441547
+  },
+  {
+    "vehicleId": "100",
+    "type": "bus",
+    "capacity": 30,
+    "status": "active",
     "speed": 65,
     "location": {
-      "lat": 51.08445193892185,
-      "lng": -114.13420257290959
+      "lat": 50.89394993844078,
+      "lng": -114.11679592875304
+    },
+    "startLocation": {
+      "lat": 51.1247447,
+      "lng": -114.2066438
+    },
+    "endLocation": {
+      "lat": 50.8792744,
+      "lng": -113.9455939
+    },
+    "startAddress": "Northwest Acura, Crowfoot Way Northwest, Calgary, AB, Canada",
+    "endAddress": "Seton Library, Market Street Southeast, Calgary, AB, Canada",
+    "id": "1741277561729",
+    "lastUpdated": "2025-03-08T16:52:50.238Z",
+    "heading": 106.11874550016309
+  },
+  {
+    "vehicleId": "999",
+    "type": "bus",
+    "capacity": 50,
+    "status": "active",
+    "speed": 30,
+    "location": {
+      "lat": 50.94696287446376,
+      "lng": -113.99083512616129
+    },
+    "startLocation": {
+      "lat": 50.87903559999999,
+      "lng": -113.9522338
+    },
+    "endLocation": {
+      "lat": 51.1537321,
+      "lng": -114.1058788
+    },
+    "startAddress": "Seton, Calgary, AB, Canada",
+    "endAddress": "Kincora, Hanson Ranch, Calgary, AB, Canada",
+    "id": "1741280427483",
+    "lastUpdated": "2025-03-08T16:52:50.266Z",
+    "heading": -80.10880092897914
+  },
+  {
+    "vehicleId": "122",
+    "type": "bus",
+    "capacity": 82,
+    "status": "active",
+    "speed": 75,
+    "location": {
+      "lat": 50.99905920030427,
+      "lng": -114.03280565304726
+    },
+    "startLocation": {
+      "lat": 50.87903559999999,
+      "lng": -113.9522338
+    },
+    "endLocation": {
+      "lat": 51.133493,
+      "lng": -114.004916
+    },
+    "startAddress": "Seton, Calgary, AB, Canada",
+    "endAddress": "Airport Road Northeast, Calgary, AB, Canada",
+    "id": "1741282206339",
+    "lastUpdated": "2025-03-08T16:52:50.199Z",
+    "heading": 22.977480890985742
+  },
+  {
+    "vehicleId": "112",
+    "type": "bus",
+    "capacity": 100,
+    "status": "active",
+    "speed": 80,
+    "location": {
+      "lat": 51.089600000000004,
+      "lng": -114.09295000000002
     },
     "startLocation": {
       "lat": 51.0783739,
       "lng": -114.134666
     },
     "endLocation": {
-      "lat": 51.1001239,
-      "lng": -114.140082
+      "lat": 51.1599929,
+      "lng": -113.961004
     },
     "startAddress": "University of Calgary, University Drive Northwest, Calgary, AB, Canada",
-    "endAddress": "Sir Winston Churchill High School | Calgary Board of Education, Northland Drive Northwest, Calgary, AB, Canada",
-    "id": "1741275711687",
-    "lastUpdated": "2025-03-06T15:43:11.889Z",
-    "heading": -0.2789976885457355
+    "endAddress": "22 Skyview Ranch Crescent Northeast, Calgary, AB, Canada",
+    "id": "1741298287440",
+    "lastUpdated": "2025-03-08T16:52:50.252Z",
+    "heading": 74.30675431265944
   },
   {
-    "vehicleId": "122",
+    "vehicleId": "070707",
     "type": "bus",
-    "capacity": 12,
+    "capacity": 1,
     "status": "active",
-    "speed": 70,
+    "speed": 75,
     "location": {
-      "lat": 51.03860539562593,
-      "lng": -114.22836395227836
+      "lat": 51.139826014176805,
+      "lng": -113.98667292211849
     },
     "startLocation": {
-      "lat": 51.038899,
-      "lng": -114.235794
+      "lat": 51.1363193,
+      "lng": -113.9652264
     },
     "endLocation": {
-      "lat": 51.1197834,
-      "lng": -114.0316572
+      "lat": 51.1438051,
+      "lng": -114.1362022
     },
-    "startAddress": "17 Avenue Southwest, Calgary, AB, Canada",
-    "endAddress": "24 Aero Drive Northeast, Calgary, AB, Canada",
-    "id": "1741275763380",
-    "lastUpdated": "2025-03-06T15:43:11.560Z",
-    "heading": 99.0356533282816
+    "startAddress": "10060 46 Street Northeast, Calgary, AB, Canada",
+    "endAddress": "104 Hampstead Mews Northwest, Calgary, AB, Canada",
+    "id": "1741452581571",
+    "lastUpdated": "2025-03-08T16:52:50.211Z",
+    "heading": -91.07003978602651
   }
 ]
