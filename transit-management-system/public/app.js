@@ -768,6 +768,7 @@ document.addEventListener('DOMContentLoaded', function() {
         delete updateIntervals[currentVehicle.id];
       }
       
+      
       fetch(`/api/vehicles/${currentVehicle.id}`, {
         method: 'DELETE'
       })

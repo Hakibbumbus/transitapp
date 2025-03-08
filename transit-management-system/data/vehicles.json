@@ -6,8 +6,8 @@
     "status": "active",
     "speed": 75,
     "location": {
-      "lat": 51.04257176008304,
-      "lng": -114.06979744125815
+      "lat": 51.04234726609842,
+      "lng": -114.0623446751428
     },
     "startLocation": {
       "lat": 51.04222,
@@ -20,8 +20,8 @@
     "startAddress": "123 11 Avenue Southeast, Calgary, AB, Canada",
     "endAddress": "1215 5 Street Southwest, Calgary, AB, Canada",
     "id": "1741277205555",
-    "lastUpdated": "2025-03-08T16:54:39.998Z",
-    "heading": -87.14615030021194
+    "lastUpdated": "2025-03-08T16:59:48.975Z",
+    "heading": null
   },
   {
     "vehicleId": "2",
@@ -30,8 +30,8 @@
     "status": "active",
     "speed": 60,
     "location": {
-      "lat": 51.105846734024,
-      "lng": -114.04637395009296
+      "lat": 51.11764778097611,
+      "lng": -114.04638987922652
     },
     "startLocation": {
       "lat": 51.0644636,
@@ -44,8 +44,8 @@
     "startAddress": "1316 33 Street Northeast, Calgary, AB, Canada",
     "endAddress": "1100 Panorama Hills Drive Northwest, Calgary, AB, Canada",
     "id": "1741277261560",
-    "lastUpdated": "2025-03-08T16:54:39.989Z",
-    "heading": -7.706295455949263
+    "lastUpdated": "2025-03-08T16:59:49.981Z",
+    "heading": 6.031196242347053
   },
   {
     "vehicleId": "100",
@@ -54,8 +54,8 @@
     "status": "active",
     "speed": 65,
     "location": {
-      "lat": 50.893840000000004,
-      "lng": -114.09704
+      "lat": 50.89247147463424,
+      "lng": -114.07465535784522
     },
     "startLocation": {
       "lat": 51.1247447,
@@ -68,8 +68,8 @@
     "startAddress": "Northwest Acura, Crowfoot Way Northwest, Calgary, AB, Canada",
     "endAddress": "Seton Library, Market Street Southeast, Calgary, AB, Canada",
     "id": "1741277561729",
-    "lastUpdated": "2025-03-08T16:54:39.980Z",
-    "heading": 95.82581844352762
+    "lastUpdated": "2025-03-08T16:59:49.977Z",
+    "heading": 92.32490982635315
   },
   {
     "vehicleId": "999",
@@ -78,8 +78,8 @@
     "status": "active",
     "speed": 30,
     "location": {
-      "lat": 50.94812253182591,
-      "lng": -114.00039653816486
+      "lat": 50.95068524700942,
+      "lng": -114.01060632784939
     },
     "startLocation": {
       "lat": 50.87903559999999,
@@ -92,8 +92,8 @@
     "startAddress": "Seton, Calgary, AB, Canada",
     "endAddress": "Kincora, Hanson Ranch, Calgary, AB, Canada",
     "id": "1741280427483",
-    "lastUpdated": "2025-03-08T16:54:39.985Z",
-    "heading": -75.13296786487271
+    "lastUpdated": "2025-03-08T16:59:49.986Z",
+    "heading": -67.51803477591702
   },
   {
     "vehicleId": "122",
@@ -102,8 +102,8 @@
     "status": "active",
     "speed": 75,
     "location": {
-      "lat": 51.008610000000004,
-      "lng": -114.02069000000002
+      "lat": 51.016177131665366,
+      "lng": -114.00439188376056
     },
     "startLocation": {
       "lat": 50.87903559999999,
@@ -116,8 +116,8 @@
     "startAddress": "Seton, Calgary, AB, Canada",
     "endAddress": "Airport Road Northeast, Calgary, AB, Canada",
     "id": "1741282206339",
-    "lastUpdated": "2025-03-08T16:54:39.971Z",
-    "heading": 98.63989887921917
+    "lastUpdated": "2025-03-08T16:59:49.974Z",
+    "heading": 17.41968622354163
   },
   {
     "vehicleId": "112",
@@ -126,8 +126,8 @@
     "status": "active",
     "speed": 80,
     "location": {
-      "lat": 51.09613,
-      "lng": -114.07805
+      "lat": 51.0960142519991,
+      "lng": -114.05667856691964
     },
     "startLocation": {
       "lat": 51.0783739,
@@ -140,8 +140,8 @@
     "startAddress": "University of Calgary, University Drive Northwest, Calgary, AB, Canada",
     "endAddress": "22 Skyview Ranch Crescent Northeast, Calgary, AB, Canada",
     "id": "1741298287440",
-    "lastUpdated": "2025-03-08T16:54:39.994Z",
-    "heading": 108.77420271894562
+    "lastUpdated": "2025-03-08T16:59:49.990Z",
+    "heading": 90.4119511422337
   },
   {
     "vehicleId": "070707",
@@ -150,8 +150,8 @@
     "status": "active",
     "speed": 75,
     "location": {
-      "lat": 51.13963020847176,
-      "lng": -114.01075510097243
+      "lat": 51.141130000000004,
+      "lng": -114.03438000000001
     },
     "startLocation": {
       "lat": 51.1363193,
@@ -164,7 +164,7 @@
     "startAddress": "10060 46 Street Northeast, Calgary, AB, Canada",
     "endAddress": "104 Hampstead Mews Northwest, Calgary, AB, Canada",
     "id": "1741452581571",
-    "lastUpdated": "2025-03-08T16:54:39.976Z",
-    "heading": -90.75988528770472
+    "lastUpdated": "2025-03-08T16:59:49.969Z",
+    "heading": -74.50653181894066
   }
 ]
