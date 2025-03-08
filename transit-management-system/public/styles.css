@@ -69,7 +69,7 @@ aside.sidebar {
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 90px); /* Adjusted since footer is removed */
   overflow-y: auto;
 }
 
@@ -223,6 +223,17 @@ input[type="range"]::-moz-range-thumb {
 .vehicle-card .vehicle-id {
   font-weight: 600;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.color-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .vehicle-card .vehicle-type, .vehicle-card .vehicle-speed {
@@ -259,13 +270,7 @@ input[type="range"]::-moz-range-thumb {
   color: var(--gray);
 }
 
-footer {
-  background-color: var(--dark);
-  color: white;
-  text-align: center;
-  padding: 1rem;
-  margin-top: auto;
-}
+/* Footer styles removed */
 
 /* Modal Styles */
 .modal {
