@@ -20,18 +20,18 @@
     "startAddress": "123 11 Avenue Southeast, Calgary, AB, Canada",
     "endAddress": "1215 5 Street Southwest, Calgary, AB, Canada",
     "id": "1741277205555",
-    "lastUpdated": "2025-03-08T16:59:48.975Z",
+    "lastUpdated": "2025-03-08T17:14:25.492Z",
     "heading": null
   },
   {
     "vehicleId": "2",
     "type": "bus",
     "capacity": 214,
-    "status": "active",
+    "status": "inactive",
     "speed": 60,
     "location": {
-      "lat": 51.11764778097611,
-      "lng": -114.04638987922652
+      "lat": 51.14199227945677,
+      "lng": -114.08981736771148
     },
     "startLocation": {
       "lat": 51.0644636,
@@ -44,8 +44,8 @@
     "startAddress": "1316 33 Street Northeast, Calgary, AB, Canada",
     "endAddress": "1100 Panorama Hills Drive Northwest, Calgary, AB, Canada",
     "id": "1741277261560",
-    "lastUpdated": "2025-03-08T16:59:49.981Z",
-    "heading": 6.031196242347053
+    "lastUpdated": "2025-03-08T17:07:44.628Z",
+    "heading": -42.50227083485773
   },
   {
     "vehicleId": "100",
@@ -54,8 +54,8 @@
     "status": "active",
     "speed": 65,
     "location": {
-      "lat": 50.89247147463424,
-      "lng": -114.07465535784522
+      "lat": 51.12483,
+      "lng": -114.20769000000001
     },
     "startLocation": {
       "lat": 51.1247447,
@@ -68,8 +68,8 @@
     "startAddress": "Northwest Acura, Crowfoot Way Northwest, Calgary, AB, Canada",
     "endAddress": "Seton Library, Market Street Southeast, Calgary, AB, Canada",
     "id": "1741277561729",
-    "lastUpdated": "2025-03-08T16:59:49.977Z",
-    "heading": 92.32490982635315
+    "lastUpdated": "2025-03-08T17:14:25.366Z",
+    "heading": -93.25672567927239
   },
   {
     "vehicleId": "999",
@@ -78,8 +78,8 @@
     "status": "active",
     "speed": 30,
     "location": {
-      "lat": 50.95068524700942,
-      "lng": -114.01060632784939
+      "lat": 50.9896969113542,
+      "lng": -114.03491000000005
     },
     "startLocation": {
       "lat": 50.87903559999999,
@@ -92,8 +92,8 @@
     "startAddress": "Seton, Calgary, AB, Canada",
     "endAddress": "Kincora, Hanson Ranch, Calgary, AB, Canada",
     "id": "1741280427483",
-    "lastUpdated": "2025-03-08T16:59:49.986Z",
-    "heading": -67.51803477591702
+    "lastUpdated": "2025-03-08T17:14:25.159Z",
+    "heading": 0
   },
   {
     "vehicleId": "122",
@@ -102,8 +102,8 @@
     "status": "active",
     "speed": 75,
     "location": {
-      "lat": 51.016177131665366,
-      "lng": -114.00439188376056
+      "lat": 51.121916753171824,
+      "lng": -114.04568636455815
     },
     "startLocation": {
       "lat": 50.87903559999999,
@@ -116,8 +116,8 @@
     "startAddress": "Seton, Calgary, AB, Canada",
     "endAddress": "Airport Road Northeast, Calgary, AB, Canada",
     "id": "1741282206339",
-    "lastUpdated": "2025-03-08T16:59:49.974Z",
-    "heading": 17.41968622354163
+    "lastUpdated": "2025-03-08T17:14:25.161Z",
+    "heading": 4.02114894479259
   },
   {
     "vehicleId": "112",
@@ -126,8 +126,8 @@
     "status": "active",
     "speed": 80,
     "location": {
-      "lat": 51.0960142519991,
-      "lng": -114.05667856691964
+      "lat": 51.17439,
+      "lng": -113.97305000000001
     },
     "startLocation": {
       "lat": 51.0783739,
@@ -140,8 +140,8 @@
     "startAddress": "University of Calgary, University Drive Northwest, Calgary, AB, Canada",
     "endAddress": "22 Skyview Ranch Crescent Northeast, Calgary, AB, Canada",
     "id": "1741298287440",
-    "lastUpdated": "2025-03-08T16:59:49.990Z",
-    "heading": 90.4119511422337
+    "lastUpdated": "2025-03-08T17:14:27.118Z",
+    "heading": 134.46645505730956
   },
   {
     "vehicleId": "070707",
@@ -150,8 +150,8 @@
     "status": "active",
     "speed": 75,
     "location": {
-      "lat": 51.141130000000004,
-      "lng": -114.03438000000001
+      "lat": 51.139871147019385,
+      "lng": -113.98270630099266
     },
     "startLocation": {
       "lat": 51.1363193,
@@ -164,7 +164,7 @@
     "startAddress": "10060 46 Street Northeast, Calgary, AB, Canada",
     "endAddress": "104 Hampstead Mews Northwest, Calgary, AB, Canada",
     "id": "1741452581571",
-    "lastUpdated": "2025-03-08T16:59:49.969Z",
-    "heading": -74.50653181894066
+    "lastUpdated": "2025-03-08T17:14:25.201Z",
+    "heading": -88.29318230373718
   }
 ]
