@@ -6,8 +6,8 @@
     "status": "active",
     "speed": 65,
     "location": {
-      "lat": 51.08283,
-      "lng": -114.13419
+      "lat": 51.08445193892185,
+      "lng": -114.13420257290959
     },
     "startLocation": {
       "lat": 51.0783739,
@@ -20,7 +20,7 @@
     "startAddress": "University of Calgary, University Drive Northwest, Calgary, AB, Canada",
     "endAddress": "Sir Winston Churchill High School | Calgary Board of Education, Northland Drive Northwest, Calgary, AB, Canada",
     "id": "1741275711687",
-    "lastUpdated": "2025-03-06T15:43:01.887Z",
+    "lastUpdated": "2025-03-06T15:43:11.889Z",
     "heading": -0.2789976885457355
   },
   {
@@ -30,8 +30,8 @@
     "status": "active",
     "speed": 70,
     "location": {
-      "lat": 51.03883312705108,
-      "lng": -114.23105394132058
+      "lat": 51.03860539562593,
+      "lng": -114.22836395227836
     },
     "startLocation": {
       "lat": 51.038899,
@@ -44,7 +44,7 @@
     "startAddress": "17 Avenue Southwest, Calgary, AB, Canada",
     "endAddress": "24 Aero Drive Northeast, Calgary, AB, Canada",
     "id": "1741275763380",
-    "lastUpdated": "2025-03-06T15:43:01.561Z",
-    "heading": 95.49186813542266
+    "lastUpdated": "2025-03-06T15:43:11.560Z",
+    "heading": 99.0356533282816
   }
 ]
