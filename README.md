@@ -4,7 +4,7 @@ A real-time transit management system built with Node.js, Express, Socket.IO, an
 
 ## Live Demo
 
-[View live application](https://your-deployed-app-url.com)
+[View live application](https://transitapp-production.up.railway.app/)
 
 ## Screenshot
 
