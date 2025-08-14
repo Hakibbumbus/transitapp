@@ -15,7 +15,11 @@ const io = socketIo(server);
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve static files except index.html (we'll handle that specially)
+app.use(express.static(path.join(__dirname, 'public'), {
+  index: false // Don't serve index.html automatically
+}));
 
 // Global variables
 let vehicles = [];
@@ -269,13 +273,14 @@ io.on('connection', (socket) => {
 });
 
 // Serve the main HTML file with API key injected
-app.get('/', async (req, res) => {
+app.get(['/', '/index.html'], async (req, res) => {
   try {
     const htmlPath = path.join(__dirname, 'public', 'index.html');
     let html = await fs.readFile(htmlPath, 'utf8');
     
     // Replace the placeholder with the actual API key
     const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || '';
+    console.log('Injecting Google Maps API key:', googleMapsApiKey ? 'Key found' : 'Key missing');
     html = html.replace('GOOGLE_MAPS_API_KEY_PLACEHOLDER', googleMapsApiKey);
     
     res.send(html);
@@ -285,14 +290,20 @@ app.get('/', async (req, res) => {
   }
 });
 
-// Serve other static files normally
-app.get('*', (req, res) => {
-  // For non-root routes, serve static files or redirect to root
-  const filePath = path.join(__dirname, 'public', req.path);
-  if (fsSync.existsSync(filePath) && !fsSync.statSync(filePath).isDirectory()) {
-    res.sendFile(filePath);
-  } else {
-    res.redirect('/');
+// Catch-all route for SPA routing
+app.get('*', async (req, res) => {
+  // For all other routes, serve the main HTML with API key injected
+  try {
+    const htmlPath = path.join(__dirname, 'public', 'index.html');
+    let html = await fs.readFile(htmlPath, 'utf8');
+    
+    const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || '';
+    html = html.replace('GOOGLE_MAPS_API_KEY_PLACEHOLDER', googleMapsApiKey);
+    
+    res.send(html);
+  } catch (error) {
+    console.error('Error serving index.html:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
