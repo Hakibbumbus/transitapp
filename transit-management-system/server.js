@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -267,9 +268,32 @@ io.on('connection', (socket) => {
   });
 });
 
-// Serve the main HTML file for all routes
+// Serve the main HTML file with API key injected
+app.get('/', async (req, res) => {
+  try {
+    const htmlPath = path.join(__dirname, 'public', 'index.html');
+    let html = await fs.readFile(htmlPath, 'utf8');
+    
+    // Replace the placeholder with the actual API key
+    const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || '';
+    html = html.replace('GOOGLE_MAPS_API_KEY_PLACEHOLDER', googleMapsApiKey);
+    
+    res.send(html);
+  } catch (error) {
+    console.error('Error serving index.html:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Serve other static files normally
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // For non-root routes, serve static files or redirect to root
+  const filePath = path.join(__dirname, 'public', req.path);
+  if (fsSync.existsSync(filePath) && !fsSync.statSync(filePath).isDirectory()) {
+    res.sendFile(filePath);
+  } else {
+    res.redirect('/');
+  }
 });
 
 // Initialize by loading vehicles
